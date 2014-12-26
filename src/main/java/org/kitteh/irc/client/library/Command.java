@@ -23,13 +23,15 @@
  */
 package org.kitteh.irc.client.library;
 
+import org.kitteh.irc.client.library.command.WhoisResponse;
+
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * Commands used in client/server communication.
  */
-enum Command {
+public enum Command {
     INVITE,
     JOIN,
     KICK,
@@ -39,7 +41,8 @@ enum Command {
     PART,
     PRIVMSG,
     TOPIC,
-    QUIT;
+    QUIT,
+    WHOIS(WhoisResponse.class);
 
     private static final Map<String, Command> nameMap = new HashMap<>();
 
@@ -57,6 +60,26 @@ enum Command {
      */
     public static Command getByName(String name) {
         return nameMap.get(name.toUpperCase());
+    }
+
+    private final Class<? extends CommandResponse> responseClass;
+
+    private Command() {
+        this(CommandResponse.class);
+    }
+
+    private Command(Class<? extends CommandResponse> responseClass) {
+        this.responseClass = responseClass;
+    }
+
+    /**
+     * Gets the class used in command responses to {@link
+     * Client#executeCommand}.
+     *
+     * @return command response class
+     */
+    public Class<? extends CommandResponse> getResponseClass() {
+        return this.responseClass;
     }
 
     @Override

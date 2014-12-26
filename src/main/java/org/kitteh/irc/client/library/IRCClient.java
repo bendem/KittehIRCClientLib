@@ -38,6 +38,7 @@ import org.kitteh.irc.client.library.event.user.PrivateCTCPReplyEvent;
 import org.kitteh.irc.client.library.event.user.PrivateNoticeEvent;
 import org.kitteh.irc.client.library.event.user.UserNickChangeEvent;
 import org.kitteh.irc.client.library.exception.KittehISupportProcessingFailureException;
+import org.kitteh.irc.client.library.util.Consumer;
 import org.kitteh.irc.client.library.util.LCSet;
 import org.kitteh.irc.client.library.util.Sanity;
 import org.kitteh.irc.client.library.element.Channel;
@@ -277,6 +278,13 @@ final class IRCClient implements Client {
             this.channelsIntended.add(channelName);
             this.sendRawLine("JOIN :" + channelName);
         }
+    }
+
+    @Override
+    public void executeCommand(Command command, String args, Consumer<? extends CommandResponse> consumer) {
+        Class<?> clazz = (Class<?>) consumer.getClass().getMethods()[0].getGenericParameterTypes()[0];
+        boolean castable = clazz.isAssignableFrom(command.getResponseClass());
+        Sanity.truthiness(castable, String.format("Invalid consumer for command %s. Expected super of %s, found %s", command, command.getResponseClass().getSimpleName(), clazz.getSimpleName()));
     }
 
     @Override

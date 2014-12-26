@@ -24,6 +24,7 @@
 package org.kitteh.irc.client.library;
 
 import org.kitteh.irc.client.library.element.Channel;
+import org.kitteh.irc.client.library.util.Consumer;
 
 import java.util.Set;
 
@@ -39,6 +40,14 @@ public interface Client {
      * @param channel channel(s) to add
      */
     void addChannel(String... channel);
+
+    /**
+     * Executes a command which will receive a
+     * @param command
+     * @param args
+     * @param consumer
+     */
+    void executeCommand(Command command, String args, Consumer<? extends CommandResponse> consumer);
 
     /**
      * Gets the channels in which the client is currently present.
